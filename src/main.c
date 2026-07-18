@@ -1,109 +1,71 @@
-#include <stdio.h>
 #include <stdlib.h>
 #include "miniz.h"
 
-int 
-main(int argc, char* argv[])
-{
-
-/*
-void* mz_zip_extract_archive_file_to_heap(
-    const char* pZip_filename,
-    const char* pArchive_name,
-    size_t*     pSize 
-*/
-
- const char* zip_filename = "../data/data.zip";  
- const char* file_to_extract = "red.png";
- const char* pCom = "";
- size_t uncompressed_size = 0;
- mz_uint zip_flags = 0; 
- mz_zip_error pError = MZ_ZIP_NO_ERROR;
- 
- printf("Extracting '%s' from '%s' ...\n", 
-	 file_to_extract,
-	 zip_filename);
-
- void* pData = mz_zip_extract_archive_file_to_heap_v2(
-		 zip_filename,
-		 file_to_extract,
-		 pCom,
-		 &uncompressed_size,
-		 zip_flags, 
-		 &pError);
-
- if(!pData) {
-   printf("%s\n", mz_zip_get_error_string(pError));
-   return EXIT_FAILURE;
- }
-
- printf("%zu\n", uncompressed_size);
-
- const unsigned char* bytes = pData;
-
- if(uncompressed_size >= 4) {
-   printf("First 4 bytes in hex: %02X  %02X %02X %02X \n",
-	 bytes[0],bytes[1],bytes[2],bytes[3]);	 
- }
-
- for (size_t i=0; i < uncompressed_size; i++) {
-   if(i%16==0)
-     printf("%02zX",(size_t)i);
-
-   printf("%02X", bytes[i]);
-
-   if((i+1)%16 == 0)
-    printf("\n");
- }
- if (uncompressed_size % 16 != 0) {
-    printf("\n");
- }
-
- const unsigned char *end = bytes + uncompressed_size;
-
- for (; bytes < end; bytes++) 
-   printf("%02X", *bytes);
- 
-
- mz_free(pData);
- 
- return EXIT_SUCCESS;
-}
-
-
-/*
-#include <stdlib.h>
-#include "app/app.h"
 
 int
-main(int argc, char *argv[])
+main(int argc, char *argv[]) 
 {
-    (void)argc;
-    (void)argv;
+  (void) argc;
+  (void) argv;
 
-    CR_App *app = NULL;
+  mz_zip_archive zip_archive = {0};
+  const char* filename = "../data/data.zip";
 
-    CR_AppConfig config =
+// 1. mz_zip_reader_init_file()
+  mz_bool status = mz_zip_reader_init_file(&zip_archive,filename,0);
+
+  if(!status)
+  {
+    fprintf(stderr, "Failed to open zip file: %s\n", filename);
+    return EXIT_FAILURE;
+  }
+
+  printf("Archive opened successfully.\n");
+
+// 2. mz_zip_reader_get_num_files()
+
+  mz_uint file_count = mz_zip_reader_get_num_files(&zip_archive);
+  printf("Files: %u\n\n", file_count);
+
+  void* data;
+  size_t size;
+
+  for(mz_uint i=0; i < file_count; i++)
+  {
+// 3. mz_zip_reader_file_stat()
+    mz_zip_archive_file_stat  stat; 
+    if(!mz_zip_reader_file_stat(&zip_archive,i,&stat))
     {
-        .title         = "Comic Reader",
-        .window_width  = 1600,
-        .window_height = 900,
-        .fullscreen    = false,
-        .resizable     = true,
-        .vsync         = true
-    };
-
-    if (CR_AppCreate(&app, &config) != CR_SUCCESS)
-    {
-        return EXIT_FAILURE;
+	printf("Cannot read file %u\n",i);
+	continue;
     }
+    printf("Index:    %u\n", stat.m_file_index);
+    printf("Filename: %s\n",stat.m_filename);
+    printf("Compressed: %llu\n",
+	   (unsigned long long)stat.m_comp_size);
+    printf("Original: %llu bytes\n",
+	   (unsigned long long)stat.m_uncomp_size);
+    printf("Directory?: %s\n",
+	   stat.m_is_directory ? "yes" : "no");
+    printf("\n"); 
+    data =   mz_zip_reader_extract_to_heap(
+		    &zip_archive,
+		    stat.m_file_index,
+	            &size,
+		    0
+		    );
+  }
 
-    CR_Error result = CR_AppRun(app);
 
-    CR_AppDestroy(app);
+  
 
-    return (result == CR_SUCCESS)
-        ? EXIT_SUCCESS
-        : EXIT_FAILURE;
+// 4. mz_zip_reader_extract_to_mem() 
+// 4. mz_zip_reader_extract_to_heap() 
+
+
+
+// 5. mz_zip_reader_end()
+  mz_zip_reader_end(&zip_archive);
+
+  return EXIT_SUCCESS;
 }
-*/
