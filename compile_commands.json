@@ -1,0 +1,14 @@
+[
+{
+  "directory": "/Users/dapm/project/comicReader/build",
+  "command": "/usr/bin/cc -DMINIZ_USE_STDIO -D_DARWIN_C_SOURCE -I/Users/dapm/project/comicReader/include -I/Users/dapm/project/comicReader/third_party/miniz -F/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks -O3 -DNDEBUG -std=gnu99 -arch arm64 -o CMakeFiles/comic-reader.dir/src/main.c.o -c /Users/dapm/project/comicReader/src/main.c",
+  "file": "/Users/dapm/project/comicReader/src/main.c",
+  "output": "CMakeFiles/comic-reader.dir/src/main.c.o"
+},
+{
+  "directory": "/Users/dapm/project/comicReader/build",
+  "command": "/usr/bin/cc -DMINIZ_USE_STDIO -D_DARWIN_C_SOURCE -I/Users/dapm/project/comicReader/include -I/Users/dapm/project/comicReader/third_party/miniz -F/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks -O3 -DNDEBUG -std=gnu99 -arch arm64 -o CMakeFiles/comic-reader.dir/third_party/miniz/miniz.c.o -c /Users/dapm/project/comicReader/third_party/miniz/miniz.c",
+  "file": "/Users/dapm/project/comicReader/third_party/miniz/miniz.c",
+  "output": "CMakeFiles/comic-reader.dir/third_party/miniz/miniz.c.o"
+}
+]
