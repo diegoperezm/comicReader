@@ -9,14 +9,14 @@ main(int argc, char *argv[])
   (void) argc;
   (void) argv;
 // char cwd[1024]; if(getcwd(cwd, sizeof(cwd))) printf("cwd = %s\n", cwd);
-  InitWindow(600, 600, "");
-  SetTargetFPS(60);               
+  InitWindow(600, 600, "Comic Reader");
+  SetTargetFPS(30);               
 
   void* image_data;
-  size_t size;
+  size_t image_size;
   mz_zip_archive zip_archive = {0};
   const char* filename = "data/data.zip";
-  size_t image_size; // NOT USED
+ 
 // 1. mz_zip_reader_init_file()
   mz_bool status = mz_zip_reader_init_file(&zip_archive,filename,0);
 
@@ -59,7 +59,7 @@ main(int argc, char *argv[])
    image_data =  mz_zip_reader_extract_to_heap( 
                 &zip_archive,
         		    0,
-	              &size,
+	              &image_size,
 		            0);
   }
 
@@ -72,7 +72,7 @@ main(int argc, char *argv[])
    Image image = LoadImageFromMemory(
     ".png",
     image_data,
-    (int)size
+    (int)image_size
    );
 
    if (image.data == NULL)
